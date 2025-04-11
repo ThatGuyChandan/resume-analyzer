@@ -10,9 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = 3001;
-
 app.use(cors({ origin: "http://localhost:5173" }));
-app.use(express.json());
 
 const upload = multer({ dest: "uploads/" });
 
@@ -34,46 +32,74 @@ const lambda = new LambdaClient({
 
 app.post("/upload", upload.single("resume"), async (req, res) => {
   const file = req.file;
-  if (!file) return res.status(400).json({ error: "No file uploaded" });
+  const jobDescription = req.body.jobDescription;
 
-  const s3Key = `resumes/${Date.now()}_${file.originalname}`;
-  const stream = fs.createReadStream(file.path);
+  if (!file || !jobDescription) {
+    return res
+      .status(400)
+      .json({ error: "Resume and job description required." });
+  }
+
+  const fileStream = fs.createReadStream(file.path);
 
   const uploadParams = {
     Bucket: process.env.S3_BUCKET_NAME,
-    Key: s3Key,
-    Body: stream,
+    Key: `resumes/${file.originalname}`,
+    Body: fileStream,
     ContentType: file.mimetype,
   };
 
   try {
-    // 1. Upload to S3
+    // 1. Upload file to S3
     await s3.send(new PutObjectCommand(uploadParams));
-    fs.unlinkSync(file.path);
+    fs.unlinkSync(file.path); // Clean up local file
 
-    // 2. Call Lambda to analyze
-    const lambdaPayload = {
-      bucket: process.env.S3_BUCKET_NAME,
-      key: s3Key,
+    // 2. Invoke Lambda function
+    const lambdaParams = {
+      FunctionName: "ExtractResumeText",
+      Payload: JSON.stringify({
+        bucket: process.env.S3_BUCKET_NAME,
+        key: `resumes/${file.originalname}`,
+        jobDescription: jobDescription,
+      }),
     };
 
-    const command = new InvokeCommand({
-      FunctionName: process.env.LAMBDA_FUNCTION_NAME,
-      Payload: Buffer.from(JSON.stringify(lambdaPayload)),
-    });
+    const lambdaRes = await lambda.send(new InvokeCommand(lambdaParams));
 
-    const lambdaResponse = await lambda.send(command);
-    const lambdaPayloadParsed = JSON.parse(
-      Buffer.from(lambdaResponse.Payload).toString()
-    );
+    // 3. Handle Lambda function error if any
+    if (lambdaRes.FunctionError) {
+      console.error("Lambda FunctionError:", lambdaRes.Payload.toString());
+      return res
+        .status(500)
+        .json({ error: "Lambda function error. Check logs for details." });
+    }
+
+    // 4. Parse and validate Lambda payload
+    let lambdaPayload;
+    try {
+      lambdaPayload = JSON.parse(Buffer.from(lambdaRes.Payload).toString());
+    } catch (parseError) {
+      console.error("Failed to parse Lambda response:", parseError);
+      return res
+        .status(500)
+        .json({ error: "Invalid response from Lambda function." });
+    }
+
+    // 5. Parse body from Lambda payload if it's wrapped
+    let analysisData;
+    try {
+      analysisData = JSON.parse(lambdaPayload.body);
+    } catch {
+      analysisData = lambdaPayload;
+    }
 
     res.json({
-      message: "Resume uploaded and analyzed!",
-      analysis: JSON.parse(lambdaPayloadParsed.body),
+      message: "Resume analyzed successfully!",
+      analysis: analysisData,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Upload or analysis failed" });
+    console.error("Upload/processing error:", error);
+    res.status(500).json({ error: "Failed to process resume." });
   }
 });
 
