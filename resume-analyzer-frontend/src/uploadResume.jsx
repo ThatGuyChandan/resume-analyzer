@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./App.css";
 
 export default function UploadResume() {
   const [file, setFile] = useState(null);
@@ -7,6 +8,15 @@ export default function UploadResume() {
   const [message, setMessage] = useState("");
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Default theme
+    document.body.classList.add("dark");
+  }, []);
+
+  const toggleTheme = () => {
+    document.body.classList.toggle("light");
+  };
 
   const handleChange = (e) => {
     setFile(e.target.files[0]);
@@ -29,9 +39,7 @@ export default function UploadResume() {
 
     try {
       const res = await axios.post("http://localhost:3001/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setMessage(res.data.message);
@@ -45,38 +53,29 @@ export default function UploadResume() {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        fontFamily: "Arial",
-        maxWidth: "800px",
-        margin: "auto",
-      }}
-    >
-      <h2>Upload Your Resume</h2>
-      <input type="file" onChange={handleChange} />
-      <br />
-      <textarea
-        placeholder="Paste the job description here..."
-        value={jobDescription}
-        onChange={(e) => setJobDescription(e.target.value)}
-        rows={6}
-        style={{ width: "100%", marginTop: "10px", padding: "10px" }}
-      />
-      <br />
-      <button
-        onClick={handleUpload}
-        style={{ marginTop: "10px" }}
-        disabled={loading}
-      >
-        {loading ? "Analyzing..." : "Upload & Analyze"}
+    <div className="container">
+      <h1 className="title">AI Resume Analyzer</h1>
+
+      <button className="theme-toggle" onClick={toggleTheme}>
+        Toggle Theme
       </button>
 
-      {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+      <div className="upload-section">
+        <input type="file" onChange={handleChange} />
+        <textarea
+          placeholder="Paste the job description here..."
+          value={jobDescription}
+          onChange={(e) => setJobDescription(e.target.value)}
+        />
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Analyzing..." : "Upload & Analyze"}
+        </button>
+        {message && <p className="message">{message}</p>}
+      </div>
 
       {analysis && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Analysis Result:</h3>
+        <div className="result-section">
+          <h2>Analysis Result:</h2>
 
           <p>
             <strong>Word Count:</strong> {analysis.wordCount}
@@ -84,26 +83,34 @@ export default function UploadResume() {
 
           <div>
             <strong>ATS Score:</strong>
-            <p style={{ color: analysis.atsScore >= 50 ? "green" : "red" }}>
-              {analysis.ats.score}% match with job description
+            <p
+              className={`score ${
+                parseInt(analysis.ats.score) >= 50 ? "good" : "bad"
+              }`}
+            >
+              {analysis.ats.score}
             </p>
           </div>
 
-          {analysis.missingKeywords?.length > 0 && (
+          {analysis.ats?.missingKeywords?.length > 0 && (
             <div>
               <strong>Missing Keywords:</strong>
-              <ul>
-                {analysis.missingKeywords.map((kw, i) => (
-                  <li key={i}>{kw}</li>
-                ))}
-              </ul>
+              <div className="scroll-box">
+                <ul>
+                  {analysis.ats.missingKeywords.map((kw, i) => (
+                    <li key={i}>{kw}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
           {analysis.summary && (
             <div>
               <strong>Summary:</strong>
-              <p>{analysis.summary}</p>
+              <div className="scroll-box">
+                <p style={{ whiteSpace: "pre-wrap" }}>{analysis.summary}</p>
+              </div>
             </div>
           )}
         </div>

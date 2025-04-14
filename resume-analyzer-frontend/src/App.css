@@ -1,42 +1,157 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* UploadResume.css */
+
+/* Root theme variables */
+:root {
+  --bg-color: #121212;
+  --container-bg: #1f1f1f;
+  --scroll-bg: #2c2c2c;
+  --text-color: #ffffff;
+  --accent-color: #00e676;
+  --danger-color: #ff1744;
+  --border-color: #444;
+}
+
+body.light {
+  --bg-color: #f3f3f3;
+  --container-bg: #ffffff;
+  --scroll-bg: #eeeeee;
+  --text-color: #000000;
+  --accent-color: #007e33;
+  --danger-color: #c62828;
+  --border-color: #ccc;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  background-color: var(--container-bg);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 163, 0.1);
+  width: 100%;
+  max-width: 800px;
+}
+
+.title {
   text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: var(--accent-color);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.upload-section input[type="file"],
+.upload-section textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background-color: var(--scroll-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 6px;
+  resize: vertical;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.upload-section textarea {
+  height: 150px;
 }
 
-.card {
-  padding: 2em;
+.upload-section button {
+  margin-top: 15px;
+  padding: 12px 25px;
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.read-the-docs {
-  color: #888;
+.upload-section button:hover {
+  background-color: #00c853;
+}
+
+.upload-section button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 10px;
+  color: #ffc107;
+}
+
+.result-section {
+  margin-top: 30px;
+  background-color: var(--scroll-bg);
+  padding: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.result-section h2 {
+  margin-bottom: 20px;
+  color: var(--accent-color);
+}
+
+.score {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.score.good {
+  color: var(--accent-color);
+}
+
+.score.bad {
+  color: var(--danger-color);
+}
+
+.scroll-box {
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: var(--container-bg);
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+/* Toggle button */
+.theme-toggle {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
 }
