@@ -103,12 +103,6 @@ This is your serverless function that:
 
 ---
 
-## 📸 Screenshot
-
-![Demo Screenshot](./screenshot.png)
-
----
-
 ## 🧠 Tech Stack
 
 - **Frontend:** React, Axios, Vercel
