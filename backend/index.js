@@ -9,7 +9,7 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 dotenv.config();
 
 const app = express();
-const PORT = 3001;
+const port = process.env.PORT || 3001;
 app.use(cors({ origin: "http://localhost:5173" }));
 
 const upload = multer({ dest: "uploads/" });
@@ -104,5 +104,5 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
