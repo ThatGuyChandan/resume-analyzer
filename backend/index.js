@@ -10,8 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-app.use(cors({ origin: process.env.FRONTEND_URL }));
-
+app.use(cors());
 const upload = multer({ dest: "uploads/" });
 
 const s3 = new S3Client({
