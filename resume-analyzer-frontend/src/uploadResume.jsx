@@ -38,9 +38,13 @@ export default function UploadResume() {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:3001/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/upload`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       setMessage(res.data.message);
       setAnalysis(res.data.analysis);
