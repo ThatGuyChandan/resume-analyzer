@@ -183,11 +183,11 @@ export default function UploadResume() {
             <h3>Resume Analysis</h3>
             <div className="analysis-summary">
               <div className="analysis-metric">
-                <span className="metric-label">Word Count</span>
+                <span className="metric-label">Word Count </span>
                 <span className="metric-value">{analysis.wordCount}</span>
               </div>
               <div className="analysis-metric">
-                <span className="metric-label">ATS Score</span>
+                <span className="metric-label">ATS Score </span>
                 <span className={`metric-value ${parseInt(analysis.ats.score) >= 50 ? 'good' : 'bad'}`}>
                   {analysis.ats.score}
                 </span>
@@ -230,7 +230,7 @@ export default function UploadResume() {
                 {analysis.jobSuggestions.map((job, index) => (
                   <div key={`job-${index}`} className="job-suggestion">
                     <h4>
-                      {job.title} 
+                      {job.title}{' '}
                       <span className="match-score">{job.matchScore || 0}% match</span>
                     </h4>
                     {job.matchingSkills && job.matchingSkills.length > 0 && (

@@ -154,6 +154,11 @@ exports.handler = async (event) => {
         keyPhrases: keyPhrasesResult.KeyPhrases,
         entities: entitiesResult.Entities,
         sentiment: sentimentResult.Sentiment,
+        ats: {
+          score: `${skillMatchPercentage}%`,
+          missingKeywords: missingSkills,
+          foundKeywords: Array.from(requiredSkills).filter(skill => foundTechnicalSkills.has(skill))
+        },
         skills: {
           technical: Array.from(foundTechnicalSkills),
           soft: Array.from(foundSoftSkills),
