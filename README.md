@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/2c32f6eb-75b6-47d7-ad42-08ab0aa1506e)# 🧠 AI Resume Analyzer
+ 🧠 AI Resume Analyzer
 
 An AI-powered Resume Analyzer that evaluates resumes against job descriptions using AWS services like Comprehend, Lambda, and S3. It provides ATS (Applicant Tracking System) score, keyword analysis, and summary improve resumes for better job matches.
 
